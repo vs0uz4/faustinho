@@ -4,7 +4,7 @@
 > Para poder executar o projeto contido neste repositório é necessário que se tenha o Docker instalado no computador. Para maiores informações siga o site <https://www.docker.com/>
 
 - [Faustinho](#faustinho)
-  - [Desafio GoLang Pós GoExpert - Stress Test](#desafio-golang-pós-goexpert---stress-test)
+  - [Desafio GoLang Pós GoExpert - CLI Stress Test](#desafio-golang-pós-goexpert---cli-stress-test)
     - [Enunciado](#enunciado)
       - [Execução do Teste](#execução-do-teste)
       - [Geração de Relatório](#geração-de-relatório)
@@ -18,7 +18,7 @@
   - [Executando o Projeto](#executando-o-projeto)
     - [Passos](#passos)
 
-## Desafio GoLang Pós GoExpert - Stress Test
+## Desafio GoLang Pós GoExpert - CLI Stress Test
 
 Este projeto faz parte da Pós GoExpert como desafio, nele precisaríamos criar uma `CLI` que pudesse realizar testes de stress em serviços web, onde o usuário pudesse fornecer parâmetros como URL, o numero total de requests e quantidade total de chamadas simultaneas, o mesmo realizasse os devidos testes e ao final exibisse um relatório. Para isto temos o seguinte enunciado abaixo:
 

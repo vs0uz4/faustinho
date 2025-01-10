@@ -43,7 +43,7 @@ func GenerateReport(runner *Runner, startTime time.Time, endTime time.Time) Repo
 	statusDist[-2] = runner.TimeoutRequests
 	statusDist[-1] = runner.FailedRequests
 
-	totalRequests := len(runner.Results) + runner.FailedRequests + runner.TimeoutRequests
+	totalRequests := runner.RequestsSent
 	avgTime := time.Duration(0)
 	if totalRequests > 0 {
 		avgTime = totalTime / time.Duration(totalRequests)

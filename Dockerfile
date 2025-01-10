@@ -1,22 +1,21 @@
 FROM golang:1.23-alpine AS builder
+
 WORKDIR /app
 
-RUN apk add --no-cache git
+COPY go.mod ./
 
-COPY go.mod go.sum ./
 RUN go mod download
 
 COPY . .
 
-RUN go build -o cli ./cmd
+RUN GOOS=linux CGO_ENABLED=0 go build -ldflags="-w -s" -o bin/faustinho ./cmd
 
 FROM alpine:3.20
+
+RUN apk add --no-cache ca-certificates
+
 WORKDIR /app
 
-COPY --from=builder /app/ .
+COPY --from=builder /app/bin/faustinho .
 
-COPY .env .
-
-EXPOSE 8080
-
-CMD ["./cli"]
+ENTRYPOINT ["./faustinho"]

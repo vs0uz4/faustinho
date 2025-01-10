@@ -18,6 +18,8 @@ type Runner struct {
 	TotalReqs       int
 	Concurrency     int
 	Results         []Result
+	ResultLock      sync.Mutex
+	RequestsSent    int
 	FailedRequests  int
 	TimeoutRequests int
 	httpClient      *http.Client
@@ -36,13 +38,15 @@ func NewRunner(url string, totalReqs, concurrency int) *Runner {
 }
 
 func (r *Runner) Execute() {
-	var wg sync.WaitGroup
 	requests := make(chan struct{}, r.Concurrency)
-	resultLock := sync.Mutex{}
+	var wg sync.WaitGroup
 
 	for i := 0; i < r.TotalReqs; i++ {
 		requests <- struct{}{}
 		wg.Add(1)
+		r.ResultLock.Lock()
+		r.RequestsSent++
+		r.ResultLock.Unlock()
 		go func() {
 			defer wg.Done()
 			start := time.Now()
@@ -52,24 +56,24 @@ func (r *Runner) Execute() {
 			if err != nil {
 				if netErr, ok := err.(net.Error); ok && netErr.Timeout() {
 					result.StatusCode = -2
-					resultLock.Lock()
+					r.ResultLock.Lock()
 					r.TimeoutRequests++
 				} else {
 					result.StatusCode = -1
-					resultLock.Lock()
+					r.ResultLock.Lock()
 					r.FailedRequests++
 				}
 				r.Results = append(r.Results, result)
-				resultLock.Unlock()
+				r.ResultLock.Unlock()
 				<-requests
 				return
 			}
 
 			result.StatusCode = resp.StatusCode
 			resp.Body.Close()
-			resultLock.Lock()
+			r.ResultLock.Lock()
 			r.Results = append(r.Results, result)
-			resultLock.Unlock()
+			r.ResultLock.Unlock()
 			<-requests
 		}()
 	}
